@@ -1,0 +1,47 @@
+.formContainer {
+  margin:0 auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+  justify-items: center;
+  flex-grow: 1;
+  width: 522px;
+}
+
+.inputContainer {
+  padding: 0;
+  max-width: 522px;
+  max-height: 60px;
+  display: flex;
+  flex-direction: row;
+  column-gap: 12px;
+  justify-content: center;
+}
+.input {
+  margin:0 auto;
+  height: 60px;
+}
+.info {
+  margin:0;
+  font-family: 'Segoe UI';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
+  padding-left: 15px;
+  align-self: flex-start;
+}
+.circlesContainer{
+  padding: 0;
+  padding-top:120px;
+  margin: 0 auto;
+  text-decoration: none;
+  list-style:none;
+  max-width: 522px;
+  max-height: 60px;
+  display: flex;
+  flex-direction: row;
+  column-gap: 12px;
+  justify-content: center;
+}

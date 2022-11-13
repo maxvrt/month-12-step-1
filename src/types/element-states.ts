@@ -3,3 +3,8 @@ export enum ElementStates {
   Changing = "changing",
   Modified = "modified",
 }
+
+export interface IElement {
+  value: string;
+  state: ElementStates;
+}
