@@ -4,18 +4,18 @@ import styles from './string.module.css';
 import {Input} from "../ui/input/input";
 import {Button} from "../ui/button/button";
 import {Circle} from "../ui/circle/circle";
-import { IElement, ElementStates } from "../../types/element-states";
+import { TElement, ElementStates } from "../../types/element-states";
 
 export const StringComponent: React.FC = () => {
 
   const [inputText, setInputText] = useState<string>('');
-  const [arr, setArr] = useState<IElement[]>([]);
+  const [arr, setArr] = useState<TElement[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
   const [circles, setCircles] = useState<JSX.Element[]>();
   const [spinner, setSpinner] = useState<boolean>(false);
 
-  const arrToElements = (arr:string[]):IElement[] => {
-    const elements:IElement[] = [];
+  const arrToElements = (arr:string[]):TElement[] => {
+    const elements:TElement[] = [];
     arr.forEach((el) => {
       elements.push({ value: el, state: ElementStates.Default })
     })
@@ -46,13 +46,13 @@ export const StringComponent: React.FC = () => {
     else if(inputText.length>11) setButtonDisabled(true);
   }, [inputText,circles]);
 
-  const swap = (arr: IElement[], firstIndex: number, secondIndex: number) => {
+  const swap = (arr: TElement[], firstIndex: number, secondIndex: number) => {
     const temp = arr[firstIndex];
     arr[firstIndex] = arr[secondIndex];
     arr[secondIndex] = temp;
   };
 
-  const reversAlgo = async (arr: IElement[]) => {
+  const reversAlgo = async (arr: TElement[]) => {
     setSpinner(true);
     await delay(1000);
     let first = 0;
@@ -77,8 +77,8 @@ export const StringComponent: React.FC = () => {
     setInputText('')
   }
 
-  function generateCircles(arr:IElement[]):JSX.Element[] {
-    const new_array:JSX.Element[] = arr.map((symbol: IElement, index: number) => {
+  function generateCircles(arr:TElement[]):JSX.Element[] {
+    const new_array:JSX.Element[] = arr.map((symbol: TElement, index: number) => {
       return (
         <li key={index}>
           <Circle letter={symbol.value} state={symbol.state} />
@@ -93,7 +93,7 @@ export const StringComponent: React.FC = () => {
       <div className={styles.formContainer}>
         <form className={styles.inputContainer} onSubmit={onRevers}>
           <Input onChange={onChangeText} onKeyUp={onKeyUp} value={inputText}></Input>
-          <Button text="Развернуть" disabled={buttonDisabled} type="submit"></Button>
+          <Button text="Развернуть" disabled={buttonDisabled} isLoader={spinner} type="submit"></Button>
         </form>
         <p className={styles.info}>Максимум — 11 символов</p>
       </div>

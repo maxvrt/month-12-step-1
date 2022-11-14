@@ -4,7 +4,7 @@ export enum ElementStates {
   Modified = "modified",
 }
 
-export interface IElement {
+export type TElement = {
   value: string;
   state: ElementStates;
 }
