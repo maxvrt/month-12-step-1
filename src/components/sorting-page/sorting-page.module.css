@@ -1,0 +1,39 @@
+.container {
+  margin: 0 auto;
+  padding:0;
+  width: 980px;
+  padding-top:48px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 48px;
+}
+.buttonsContainer {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  column-gap: 80px;
+}
+.radio {
+  display: flex;
+  flex-direction: row;
+  column-gap: 40px;
+  align-items: center;
+}
+.buttons {
+  display: flex;
+  flex-direction: row;
+  column-gap: 12px;
+}
+.buttons > *:last-child {
+  margin-left: 50px;
+}
+.columnsContainer {
+  margin: 0 auto;
+  padding: 0;
+  padding-bottom: 30px;
+  display: flex;
+  flex-direction: row;
+  column-gap: 8px;
+  align-items: flex-end;
+  list-style:none;
+}
