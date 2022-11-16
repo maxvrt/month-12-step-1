@@ -10,9 +10,11 @@ import { Column } from "../ui/column/column";
 export const SortingPage: React.FC = () => {
   const rndInt = Math.floor(Math.random() * 15) + 3;
   const [firstArr, setFirstArr] = useState<TElement[]>([]);
-  const [spinner, setSpinner] = useState<boolean>(false);
+  const [spinner, setSpinner] = useState<number>(0);
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
   const [radio, setRadio] = useState<string>('select');
   const [isNewArr, setIsNewArr] = useState<boolean>(false);
+
   const delay = (time:number) => {
     return new Promise((resolve, reject) => {
       setTimeout(resolve, time);
@@ -47,6 +49,7 @@ export const SortingPage: React.FC = () => {
     const randomArr = Array.from({length: rndInt}, () => Math.floor(Math.random() * 100));
     const elements = arrToElements(randomArr);
     setFirstArr(elements);
+    setButtonDisabled(false);
   }, [isNewArr]);
 
   const swap = (arr: TElement[], firstIndex: number, secondIndex: number) => {
@@ -55,8 +58,8 @@ export const SortingPage: React.FC = () => {
     arr[secondIndex] = temp;
   };
 
-  const selectionSort = async (arr: TElement[], isAscending: boolean) => {
-    console.log('selection');
+  const selectionSort = async (arr: TElement[], isAscending: boolean): Promise<void> => {
+    setButtonDisabled(true);
     const { length } = arr;
     for (let i = 0; i < length; i++) {
       await delay(100);
@@ -86,9 +89,11 @@ export const SortingPage: React.FC = () => {
       }
       setFirstArr([...arr]);
     }
+    setButtonDisabled(false);
+    setSpinner(0);
   }
-  const bubbleSort = async (arr: TElement[], isAscending: boolean) => {
-    console.log('bubbleSort');
+  const bubbleSort = async (arr: TElement[], isAscending: boolean): Promise<void> => {
+    setButtonDisabled(true);
     for (let i = 0; i < arr.length; i++) {
       for(let j = 0 ; j < arr.length - i - 1; j++) {
         await delay(100);
@@ -109,9 +114,13 @@ export const SortingPage: React.FC = () => {
         setFirstArr([...arr]);
       }
     }
+    setButtonDisabled(false);
+    setSpinner(0);
   }
 
   const onClickDesc = async (): Promise<void> => {
+    setSpinner(2);
+    console.log(spinner);
     if (radio === 'select') {
       selectionSort(firstArr, false);
     } else if (radio === 'bubble') {
@@ -119,6 +128,8 @@ export const SortingPage: React.FC = () => {
     }
   }
   const onClickAsc = async (): Promise<void> => {
+    setSpinner(1);
+    console.log(spinner);
     if (radio === 'select') {
       selectionSort(firstArr, true);
     } else if (radio === 'bubble') {
@@ -140,34 +151,35 @@ export const SortingPage: React.FC = () => {
                 name='one'
                 defaultChecked
                 onChange={onClickRadio}
-                disabled={false}
+                disabled={buttonDisabled}
             />
             <RadioInput
                 label="Пузырек"
                 value="bubble"
                 name='one'
                 onChange={onClickRadio}
-                disabled={false}
+                disabled={buttonDisabled}
             />
           </div>
           <div className={style.buttons}>
             <Button
+                disabled={buttonDisabled}
+                isLoader={spinner === 1}
                 text="По возрастанию"
                 onClick={onClickAsc}
                 sorting={Direction.Ascending}
-                disabled={false}
             />
             <Button
+                disabled={buttonDisabled}
+                isLoader={spinner === 2}
                 text="По убыванию"
                 onClick={onClickDesc}
                 sorting={Direction.Descending}
-                disabled={false}
-                isLoader={false}
             />
             <Button
                 text="Новый массив"
                 onClick={OnClickNewArr}
-                disabled={false}
+                disabled={buttonDisabled}
                 isLoader={false}
             />
           </div>
