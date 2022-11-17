@@ -11,6 +11,8 @@ interface IStack<T> {
   pop: () => void;
   peak: () => T | null;
   getSize: () => number;
+  getStack: () => T[];
+  clear: () => void;
 }
 class Stack<T> implements IStack<T> {
   private container: T[] = [];
@@ -46,8 +48,8 @@ export const StackPage: React.FC = () => {
       setTimeout(resolve, time);
     });
   }
-  useEffect(() => {
-  },[isChanging])
+  useEffect(() => {},[isChanging]);
+
   const onChangeText = (e: FormEvent<HTMLInputElement>): void => {
     setText(e.currentTarget.value)
   }
@@ -88,6 +90,7 @@ export const StackPage: React.FC = () => {
           onChange={onChangeText}
           value={text}
           disabled={false}
+          maxLength={4}
         />
         <Button
           isLoader={false}
