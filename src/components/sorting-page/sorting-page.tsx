@@ -62,15 +62,15 @@ export const SortingPage: React.FC = () => {
     setButtonDisabled(true);
     const { length } = arr;
     for (let i = 0; i < length; i++) {
-      await delay(100);
+      await delay(500);
       let maxInd = i
       arr[i].state = ElementStates.Changing
       setFirstArr([...arr]);
-      await delay(100);
+      await delay(500);
       for (let j = i + 1; j < length; j++) {
         arr[j].state = ElementStates.Changing
         setFirstArr([...arr]);
-        await delay(100);
+        await delay(500);
         if (checkAscDesc(isAscending, arr, j, maxInd)) {
           if (i !== maxInd) {
             arr[maxInd].state = ElementStates.Default
@@ -96,11 +96,11 @@ export const SortingPage: React.FC = () => {
     setButtonDisabled(true);
     for (let i = 0; i < arr.length; i++) {
       for(let j = 0 ; j < arr.length - i - 1; j++) {
-        await delay(100);
+        await delay(500);
         arr[j].state = ElementStates.Changing
         arr[j + 1].state = ElementStates.Changing
         setFirstArr([...arr]);
-        await delay(100);
+        await delay(500);
         if (checkAscDesc(isAscending, arr, j)) {
           swap(arr, j, j + 1)
         }

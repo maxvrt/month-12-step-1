@@ -5,42 +5,13 @@ import { TElement, ElementStates } from "../../types/element-states";
 import { Circle } from "../ui/circle/circle";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
+import { Stack } from "./class"
 
-interface IStack<T> {
-  push: (item: T) => void;
-  pop: () => void;
-  peak: () => T | null;
-  getSize: () => number;
-  getStack: () => T[];
-  clear: () => void;
-}
-class Stack<T> implements IStack<T> {
-  private container: T[] = [];
-  push = (item: T): void => {
-    this.container.push(item)
-  };
-  pop = (): void => {
-    if (this.getSize()) this.container.pop()
-  };
-  peak = (): T | null => {
-    if (this.getSize()) return this.container[this.container.length - 1]
-    else return null;
-  };
-  getStack = (): T[] => {
-    return this.container;
-  }
-  getSize = () => this.container.length;
-
-  clear = (): void => {
-    this.container = []
-  }
-}
 let stack = new Stack<TElement>();
 
 export const StackPage: React.FC = () => {
   const [text, setText] = useState<string>('');
   const [firstArr, setFirstArr] = useState<TElement[]>([]);
-  const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
   const [isChanging, setIsChanging] = useState<boolean>(false);
 
   const delay = (time:number) => {
@@ -96,19 +67,19 @@ export const StackPage: React.FC = () => {
           isLoader={false}
           text='Добавить'
           onClick={push}
-          disabled={false}
+          disabled={!text}
         />
         <Button
           isLoader={false}
           text='Удалить'
           onClick={pop}
-          disabled={false}
+          disabled={firstArr.length===0}
         />
         <Button
           text='Очистить'
           type='submit'
           onClick={del}
-          disabled={false}
+          disabled={firstArr.length===0}
         />
       </form>
       <ul className={styles.circlesContainer}>
