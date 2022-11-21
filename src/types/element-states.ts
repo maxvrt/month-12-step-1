@@ -7,4 +7,6 @@ export enum ElementStates {
 export type TElement = {
   value: string;
   state: ElementStates;
+  child?: TElement;
+  childBottom?: TElement;
 }
