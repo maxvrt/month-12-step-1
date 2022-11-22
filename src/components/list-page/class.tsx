@@ -16,10 +16,12 @@ interface ILinkedList<T> {
   deleteHead: () => void;
 }
 export class LinkedList<T> implements ILinkedList<T> {
-  private head: Node<T> | null;
-  private size: number;
+  private head: Node<T> | null = null;
+  private size: number = 0;
   constructor(arr:T[]) {
-    this.head = null;
+    this.setList(arr);
+  }
+  private setList (arr:T[]) {
     this.size = arr.length;
     arr.forEach(el => this.append(el))
   }

@@ -4,6 +4,7 @@ import styles from './fibonacci-page.module.css';
 import {Input} from "../ui/input/input";
 import {Button} from "../ui/button/button";
 import {Circle} from "../ui/circle/circle";
+import {delay} from "../utils";
 
 export const FibonacciPage: React.FC = () => {
   const [inputText, setInputText] = useState<string>('');
@@ -25,11 +26,6 @@ export const FibonacciPage: React.FC = () => {
     setInputText(text);
   }
 
-  const delay = (time:number) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(resolve, time);
-    });
-  }
   const fibIterative = (n: number): number[] => {
     let arr: number[] = [0, 1];
     for (let i = 2; i < n + 1; i++){
@@ -37,7 +33,7 @@ export const FibonacciPage: React.FC = () => {
     }
    return arr;
   }
-  const fibRender = async (n: any) => {
+  const fibRender = async (n: number) => {
     setSpinner(true);
     const arrInner = fibIterative(n);
     for (let i = 0; i < arrInner.length; i++){
@@ -56,17 +52,6 @@ export const FibonacciPage: React.FC = () => {
       };
     } else if(inputText.length===0) setCircles([])
     else console.log('Неправильное число');
-  }
-
-  function generateCircles(arr:number[]):JSX.Element[] {
-    const new_array:JSX.Element[] = arr.map((symbol: number, index: number) => {
-      return (
-        <li key={index}>
-          <Circle letter={symbol.toString()}/>
-        </li>
-      )
-    });
-    return new_array
   }
 
   return (

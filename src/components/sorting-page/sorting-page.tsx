@@ -6,6 +6,7 @@ import { Direction } from "../../types/direction";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import style from "./sorting-page.module.css";
 import { Column } from "../ui/column/column";
+import {delay} from "../utils";
 
 export const SortingPage: React.FC = () => {
   const rndInt = Math.floor(Math.random() * 15) + 3;
@@ -15,11 +16,6 @@ export const SortingPage: React.FC = () => {
   const [radio, setRadio] = useState<string>('select');
   const [isNewArr, setIsNewArr] = useState<boolean>(false);
 
-  const delay = (time:number) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(resolve, time);
-    });
-  }
   const onClickRadio = (e: ChangeEvent<HTMLInputElement>): void => {
     setRadio((e.target as HTMLInputElement).value);
     console.log((e.target as HTMLInputElement).value);

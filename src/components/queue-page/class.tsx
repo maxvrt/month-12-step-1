@@ -11,12 +11,12 @@ interface IQueue<T> {
 }
 export class Queue<T> implements IQueue<T> {
   private container: (T | null)[] = [];
-  private readonly size: number = 0;
+  //private readonly size: number = 0;
   private length: number = 0;
   private head = 0;
   private tail = 0;
 
-  constructor(size: number) {
+  constructor(private readonly size: number) {
     this.size = size;
     this.container = Array(size);
   }

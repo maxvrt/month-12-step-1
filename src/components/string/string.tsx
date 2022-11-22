@@ -5,100 +5,86 @@ import {Input} from '../ui/input/input';
 import {Button} from '../ui/button/button';
 import {Circle} from '../ui/circle/circle';
 import { TElement, ElementStates } from "../../types/element-states";
+import {delay} from "../utils";
 
 export const StringComponent: React.FC = () => {
 
   const [inputText, setInputText] = useState<string>('');
-  const [arr, setArr] = useState<TElement[]>([]);
+  const [arr, setArr] = useState<TElement[]>();
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
-  const [circles, setCircles] = useState<JSX.Element[]>();
+  //const [circles, setCircles] = useState<JSX.Element[]|null>();
   const [spinner, setSpinner] = useState<boolean>(false);
 
-  const arrToElements = (arr:string[]):TElement[] => {
-    const elements:TElement[] = [];
-    arr.forEach((el) => {
-      elements.push({ value: el, state: ElementStates.Default })
-    })
-    return elements
-  }
-  const delay = (time:number) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(resolve, time);
-    });
-  }
   const onChangeText = (e: FormEvent<HTMLInputElement>): void => {
-    if(inputText.length===0) setCircles([]);
     const text = e.currentTarget.value;
     setInputText(text);
   }
-  // отрисовка кругов при вводе
-  const onKeyUp  = (e: FormEvent<HTMLInputElement>): void => {
-    if(inputText.length>0 && inputText.length<=11){
-      setArr(arrToElements(inputText.split('')));
-      setCircles(generateCircles(arr));
-    } else if(inputText.length===0) setCircles([]);
-  }
+
   useEffect(() => {
     if(inputText.length>0 && inputText.length<=11){
       setButtonDisabled(false);
-      if(circles && circles.length !== arr.length) setCircles(generateCircles(arr));
+      //if(arr && circles && circles.length !== arr?.length) setCircles([...generateCircles(arr)]);
     }
     else if(inputText.length>11) setButtonDisabled(true);
-  }, [inputText,circles]);
+  }, [inputText,arr]);
 
-  const swap = (arr: TElement[], firstIndex: number, secondIndex: number) => {
-    const temp = arr[firstIndex];
-    arr[firstIndex] = arr[secondIndex];
-    arr[secondIndex] = temp;
+  const swap = (firstIndex: number, secondIndex: number, innerArr: TElement[]) => {
+    if(innerArr){
+      const temp = innerArr[firstIndex];
+      innerArr[firstIndex] = innerArr[secondIndex];
+      innerArr[secondIndex] = temp;
+    }
   };
 
-  const reversAlgo = async (arr: TElement[]) => {
+  const reversAlgo = async(input: string) => {
     setSpinner(true);
+    const elements:TElement[] = [];
+    input.split('').forEach((el) => {
+      elements.push({ value: el, state: ElementStates.Default })
+    })
+    setArr([...elements]);
+    console.log(`${JSON.stringify(arr)}`);
     await delay(1000);
     let first = 0;
-    let last = arr.length -1;
+    let last = elements.length -1;
     while (first <= last) {
-      arr[first].state = ElementStates.Changing;
-      arr[last].state = ElementStates.Changing;
-      swap(arr, first, last);
-      setCircles(generateCircles(arr));
+      elements[first].state = ElementStates.Changing;
+      elements[last].state = ElementStates.Changing;
+      swap(first, last, elements);
+      setArr([...elements]);
+      console.log(`${JSON.stringify(arr)}`);
       await delay(1000);
-      arr[first].state = ElementStates.Modified;
-      arr[last].state = ElementStates.Modified;
-      setCircles(generateCircles(arr));
+      elements[first].state = ElementStates.Modified;
+      elements[last].state = ElementStates.Modified;
+      setArr([...elements]);
       first++;
       last--;
     }
     setSpinner(false);
   }
-  const onRevers = (e: FormEvent<HTMLElement>) => {
+  const onRevers = async (e: FormEvent<HTMLElement>) => {
     e.preventDefault()
-    reversAlgo(arr)
+    reversAlgo(inputText)
     setInputText('')
-  }
-
-  function generateCircles(arr:TElement[]):JSX.Element[] {
-    const new_array:JSX.Element[] = arr.map((symbol: TElement, index: number) => {
-      return (
-        <li key={index}>
-          <Circle letter={symbol.value} state={symbol.state} />
-        </li>
-      )
-    });
-    return new_array
   }
 
   return (
     <SolutionLayout title="Строка">
       <div className={styles.formContainer}>
         <form className={styles.inputContainer} onSubmit={onRevers}>
-          <Input onChange={onChangeText} onKeyUp={onKeyUp} value={inputText}></Input>
+          <Input onChange={onChangeText} value={inputText} maxLength={11}></Input>
           <Button text="Развернуть" disabled={buttonDisabled} isLoader={spinner} type="submit"></Button>
         </form>
         <p className={styles.info}>Максимум — 11 символов</p>
       </div>
       <ul className={styles.circlesContainer}>
-        {circles}
+        {arr?.map((symbol: TElement, index: number) => {
+          return (
+            <li key={index}>
+            <Circle letter={symbol.value} state={symbol.state} />
+          </li>
+          )
+        })}
       </ul>
     </SolutionLayout>
   );

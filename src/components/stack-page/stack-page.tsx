@@ -6,6 +6,7 @@ import { Circle } from "../ui/circle/circle";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Stack } from "./class"
+import {delay} from "../utils";
 
 let stack = new Stack<TElement>();
 
@@ -14,11 +15,6 @@ export const StackPage: React.FC = () => {
   const [firstArr, setFirstArr] = useState<TElement[]>([]);
   const [isChanging, setIsChanging] = useState<boolean>(false);
 
-  const delay = (time:number) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(resolve, time);
-    });
-  }
   useEffect(() => {},[isChanging]);
 
   const onChangeText = (e: FormEvent<HTMLInputElement>): void => {

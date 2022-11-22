@@ -6,41 +6,44 @@ import { Circle } from "../ui/circle/circle";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Queue } from "./class"
+import {delay} from "../utils";
 
-let queue = new Queue<TElement>(7);
+//let queue = new Queue<TElement>(7);
 export const QueuePage: React.FC = () => {
 
+  const [queue, setQueue] = useState<Queue<TElement>>(new Queue<TElement>(7));
   const [text, setText] = useState<string>('');
   const [firstArr, setFirstArr] = useState<(TElement| null)[]>([]);
   const [isChanging, setIsChanging] = useState<boolean>(false);
   const [head, setHead] = useState<number>(queue.getHead());
   const [tail, setTail] = useState<number>(queue.getTail());
+  const [addDisabled, setAddDisabled] = useState<boolean>(true);
+  const [addingElement, setAddingElement] = useState<boolean>(false);
+  const [deletingElement, setDeletingElement] = useState<boolean>(false);
 
-  const delay = (time:number) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(resolve, time);
-    });
-  }
   useEffect(() => {
     setFirstArr([...queue.getQueue()]);
-  },[isChanging])
+    console.log(`text - ${text} && addingElement - ${addingElement}`);
+    if (text) setAddDisabled(false)
+  },[isChanging, text])
 
   const onChangeText = (e: FormEvent<HTMLInputElement>): void => {
-    setText(e.currentTarget.value)
+    setText(e.currentTarget.value);
   }
   const enqueue = async () => {
-    if (firstArr.length<=7) {
-      queue.enqueue({value: text, state: ElementStates.Changing});
-      setIsChanging(!isChanging);
-      setTail(queue.getTail());
-      await delay(500);
-      const element =  queue.last();
-      if(element) element.state = ElementStates.Default;
-      setIsChanging(!isChanging);
-      setText('');
-    }
+    setAddingElement(true);
+    if(firstArr.length > 7) return;
+    queue.enqueue({value: text, state: ElementStates.Changing});
+    setIsChanging(!isChanging);
+    setTail(queue.getTail());
+    await delay(500);
+    const element =  queue.last();
+    if(element) element.state = ElementStates.Default;
+    setIsChanging(!isChanging);
+    setAddingElement(false);
   }
   const dequeue = async () => {
+    setDeletingElement(true);
     if (queue && !queue.isEmpty()) {
       const element =  queue.peak();
       if(element) element.state = ElementStates.Changing;
@@ -50,6 +53,7 @@ export const QueuePage: React.FC = () => {
       setFirstArr([...queue.getQueue()]);
       await delay(500);
       setHead(queue.getHead());
+      setDeletingElement(false);
     }
   }
   const getTop = (index: number) => {
@@ -61,7 +65,7 @@ export const QueuePage: React.FC = () => {
     else return ''
   };
   const del = () => {
-    queue = new Queue<TElement>(7);
+    setQueue(new Queue<TElement>(7));
     setIsChanging(!isChanging);
   }
 
@@ -74,13 +78,13 @@ export const QueuePage: React.FC = () => {
           maxLength={4}
         />
         <Button
-          isLoader={false}
+          isLoader={addingElement}
           text='Добавить'
           onClick={enqueue}
-          disabled={!text}
+          disabled={addDisabled}
         />
         <Button
-          isLoader={false}
+          isLoader={deletingElement}
           text='Удалить'
           onClick={dequeue}
           disabled={queue.isEmpty()}

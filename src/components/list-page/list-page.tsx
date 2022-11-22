@@ -7,13 +7,14 @@ import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
 import { LinkedList } from "./class"
+import {delay} from "../utils";
 
 const initArr = [{value: '0', state: ElementStates.Default},{value: '34', state: ElementStates.Default},{value: '8', state: ElementStates.Default},{value: '1', state: ElementStates.Default}];
 const list = new LinkedList<TElement>(initArr);
 
 export const ListPage: React.FC = () => {
-  const [text, setText] = useState<string>('');
-  const [index, setIndex] = useState<string>('');
+  const [text, setText] = useState('');
+  const [index, setIndex] = useState('');
   const [firstArr, setFirstArr] = useState<(TElement)[]>();
   const [spinner, setSpinner] = useState<number>();
 
@@ -23,11 +24,6 @@ export const ListPage: React.FC = () => {
   const onChangeIndex = (e: FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value || ''
     setIndex(value);
-  }
-  const delay = (time:number) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(resolve, time);
-    });
   }
   useEffect(() => {
     setFirstArr(initArr);
@@ -168,13 +164,13 @@ export const ListPage: React.FC = () => {
               text='Добавить в head'
               onClick={addToHead}
               isLoader={spinner === 1}
-              disabled={!text || spinner !== undefined && spinner !== 1}
+              disabled={!text || (spinner !== undefined && spinner !== 1)}
             />
             <Button
               text='Добавить в tail'
               onClick={addToTail}
               isLoader={spinner === 2}
-              disabled={!text || spinner !== undefined && spinner !== 2}
+              disabled={!text || (spinner !== undefined && spinner !== 2)}
             />
             <Button
               text='Удалить из head'
@@ -203,13 +199,13 @@ export const ListPage: React.FC = () => {
               text='Добавить по индексу'
               onClick={аddByIndex}
               isLoader={spinner === 5}
-              disabled={!index || spinner !== undefined && spinner !== 5}
+              disabled={!index || (spinner !== undefined && spinner !== 5)}
             />
             <Button
               text='Удалить по индексу'
               onClick={delByIndex}
               isLoader={spinner === 6}
-              disabled={!index || spinner !== undefined && spinner !== 6}
+              disabled={!index || (spinner !== undefined && spinner !== 6)}
             />
         </div>
         <ul className={styles.circlesContainer}>
