@@ -3,3 +3,10 @@ export enum ElementStates {
   Changing = "changing",
   Modified = "modified",
 }
+
+export type TElement = {
+  value: string;
+  state: ElementStates;
+  child?: TElement;
+  childBottom?: TElement;
+}
