@@ -21,7 +21,6 @@ export const reversAlgo = async(input: string, setSpinner:(isSpinner:boolean) =>
     elements.push({ value: el, state: ElementStates.Default })
   })
   setArr([...elements]);
-  //console.log(`${JSON.stringify(arr)}`);
   await delay(1000);
   let first = 0;
   let last = elements.length -1;
@@ -30,7 +29,6 @@ export const reversAlgo = async(input: string, setSpinner:(isSpinner:boolean) =>
     elements[last].state = ElementStates.Changing;
     swap(first, last, elements);
     setArr([...elements]);
-    //console.log(`${JSON.stringify(arr)}`);
     await delay(1000);
     elements[first].state = ElementStates.Modified;
     elements[last].state = ElementStates.Modified;
@@ -43,7 +41,6 @@ export const reversAlgo = async(input: string, setSpinner:(isSpinner:boolean) =>
   elements.map(el=>{
     newString = newString + el.value;
   })
-  console.log(newString);
   return newString;
 }
 

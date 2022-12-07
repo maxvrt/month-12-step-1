@@ -6,7 +6,96 @@ import { Direction } from "../../types/direction";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import style from "./sorting-page.module.css";
 import { Column } from "../ui/column/column";
-import {delay} from "../utils";
+import { delay } from "../utils";
+
+export const swap = (arr: TElement[], firstIndex: number, secondIndex: number) => {
+  const temp = arr[firstIndex];
+  arr[firstIndex] = arr[secondIndex];
+  arr[secondIndex] = temp;
+};
+// проверка режима сортировки для обоих функций
+export const checkAscDesc = (isAscending: boolean, arr: TElement[], j: number, maxInd?: number) => {
+  if (maxInd) {
+    if ((!isAscending && parseInt(arr[maxInd].value) < parseInt(arr[j].value))||
+      (isAscending && parseInt(arr[maxInd].value) > parseInt(arr[j].value))) return true
+    else return false
+  } else if(arr[j]?.value && arr[j + 1]?.value) {
+    if ((isAscending && parseInt(arr[j].value) > parseInt(arr[j + 1].value))||
+    (!isAscending && parseInt(arr[j].value) < parseInt(arr[j + 1].value))) return true
+    else return false
+  }
+}
+
+export const selectionSort = async (arr: TElement[], isAscending: boolean, setButtonDisabled:(isDisabled:boolean) => void, setFirstArr:(arr:TElement[]) => void, setSpinner:(isSpinner:number) => void, timeout:number ) => {
+  setButtonDisabled(true);
+  const { length } = arr;
+  let arrCopy:string[] = [];
+  for (let i = 0; i < length; i++) {
+    await delay(timeout);
+    let maxInd = i
+    arr[i].state = ElementStates.Changing
+    setFirstArr([...arr]);
+    await delay(timeout);
+    for (let j = i + 1; j < length; j++) {
+      arr[j].state = ElementStates.Changing
+      setFirstArr([...arr]);
+      await delay(timeout);
+      if (checkAscDesc(isAscending, arr, j, maxInd)) {
+        if (i !== maxInd) {
+          arr[maxInd].state = ElementStates.Default
+          setFirstArr([...arr]);
+        }
+        maxInd  = j
+      } else {
+        arr[j].state = ElementStates.Default
+        setFirstArr([...arr]);
+      }
+    }
+    swap(arr, i, maxInd)
+    arr[i].state = ElementStates.Modified
+    if (i !== maxInd) {
+      arr[maxInd].state = ElementStates.Default
+    }
+    setFirstArr([...arr]);
+    const tempArr:string[] = arr.map(el=>{return el.value})
+    arrCopy = [...tempArr];
+  }
+  setButtonDisabled(false);
+  setSpinner(0);
+  return arrCopy.join();
+}
+
+export const bubbleSort = async (arr: TElement[], isAscending: boolean, setButtonDisabled:(isDisabled:boolean) => void, setFirstArr:(arr:TElement[]) => void, setSpinner:(isSpinner:number) => void, timeout:number) => {
+  if(arr.length < 1) return '';
+  if(arr.length === 1) return arr[0].value;
+  setButtonDisabled(true);
+  let arrCopy:string[] = [];
+  for (let i = 0; i < arr.length; i++) {
+    for(let j = 0 ; j < arr.length - i - 1; j++) {
+      await delay(timeout);
+      arr[j].state = ElementStates.Changing;
+      arr[j + 1].state = ElementStates.Changing;
+      setFirstArr([...arr]);
+      await delay(timeout);
+      if (checkAscDesc(isAscending, arr, j)) {
+        swap(arr, j, j + 1)
+      }
+      arr[j].state = ElementStates.Default
+      if (j === arr.length - i - 2) {
+        arr[j + 1].state = ElementStates.Modified;
+        if (j === 0) {
+          arr[j].state = ElementStates.Modified;
+        }
+      }
+      setFirstArr([...arr]);
+      const tempArr:string[] = arr.map(el=>{return el.value})
+      arrCopy = [...tempArr];
+    }
+  }
+  setButtonDisabled(false);
+  setSpinner(0);
+  return arrCopy.join();
+}
 
 export const SortingPage: React.FC = () => {
   const rndInt = Math.floor(Math.random() * 15) + 3;
@@ -28,19 +117,6 @@ export const SortingPage: React.FC = () => {
     return elements
   }
 
-  // проверка режима сортировки для обоих функций
-  const checkAscDesc = (isAscending: boolean, arr: TElement[], j: number, maxInd?: number) => {
-    if (maxInd) {
-      if ((!isAscending && parseInt(arr[maxInd].value) < parseInt(arr[j].value))||
-        (isAscending && parseInt(arr[maxInd].value) > parseInt(arr[j].value))) return true
-      else return false
-    } else if(arr[j]?.value && arr[j + 1]?.value) {
-      if ((isAscending && parseInt(arr[j].value) > parseInt(arr[j + 1].value))||
-      (!isAscending && parseInt(arr[j].value) < parseInt(arr[j + 1].value))) return true
-      else return false
-    }
-  }
-
   useEffect(() => {
     const randomArr = Array.from({length: rndInt}, () => Math.floor(Math.random() * 100));
     const elements = arrToElements(randomArr);
@@ -48,88 +124,21 @@ export const SortingPage: React.FC = () => {
     setButtonDisabled(false);
   }, [isNewArr]);
 
-  const swap = (arr: TElement[], firstIndex: number, secondIndex: number) => {
-    const temp = arr[firstIndex];
-    arr[firstIndex] = arr[secondIndex];
-    arr[secondIndex] = temp;
-  };
-
-  const selectionSort = async (arr: TElement[], isAscending: boolean): Promise<void> => {
-    setButtonDisabled(true);
-    const { length } = arr;
-    for (let i = 0; i < length; i++) {
-      await delay(500);
-      let maxInd = i
-      arr[i].state = ElementStates.Changing
-      setFirstArr([...arr]);
-      await delay(500);
-      for (let j = i + 1; j < length; j++) {
-        arr[j].state = ElementStates.Changing
-        setFirstArr([...arr]);
-        await delay(500);
-        if (checkAscDesc(isAscending, arr, j, maxInd)) {
-          if (i !== maxInd) {
-            arr[maxInd].state = ElementStates.Default
-            setFirstArr([...arr]);
-          }
-          maxInd  = j
-        } else {
-          arr[j].state = ElementStates.Default
-          setFirstArr([...arr]);
-        }
-      }
-      swap(arr, i, maxInd)
-      arr[i].state = ElementStates.Modified
-      if (i !== maxInd) {
-        arr[maxInd].state = ElementStates.Default
-      }
-      setFirstArr([...arr]);
-    }
-    setButtonDisabled(false);
-    setSpinner(0);
-  }
-  const bubbleSort = async (arr: TElement[], isAscending: boolean): Promise<void> => {
-    setButtonDisabled(true);
-    for (let i = 0; i < arr.length; i++) {
-      for(let j = 0 ; j < arr.length - i - 1; j++) {
-        await delay(500);
-        arr[j].state = ElementStates.Changing
-        arr[j + 1].state = ElementStates.Changing
-        setFirstArr([...arr]);
-        await delay(500);
-        if (checkAscDesc(isAscending, arr, j)) {
-          swap(arr, j, j + 1)
-        }
-        arr[j].state = ElementStates.Default
-        if (j === arr.length - i - 2) {
-          arr[j + 1].state = ElementStates.Modified
-          if (j === 0) {
-            arr[j].state = ElementStates.Modified
-          }
-        }
-        setFirstArr([...arr]);
-      }
-    }
-    setButtonDisabled(false);
-    setSpinner(0);
-  }
-
   const onClickDesc = async (): Promise<void> => {
     setSpinner(2);
-    console.log(spinner);
     if (radio === 'select') {
-      selectionSort(firstArr, false);
+      selectionSort(firstArr, false, setButtonDisabled, setFirstArr, setSpinner, 500);
     } else if (radio === 'bubble') {
-      bubbleSort(firstArr, false);
+      bubbleSort(firstArr, false, setButtonDisabled, setFirstArr, setSpinner, 500);
     }
   }
   const onClickAsc = async (): Promise<void> => {
     setSpinner(1);
     console.log(spinner);
     if (radio === 'select') {
-      selectionSort(firstArr, true);
+      selectionSort(firstArr, true, setButtonDisabled, setFirstArr, setSpinner, 500);
     } else if (radio === 'bubble') {
-      bubbleSort(firstArr, true);
+      bubbleSort(firstArr, true, setButtonDisabled, setFirstArr, setSpinner, 500);
     }
   }
   const OnClickNewArr = async (): Promise<void> => {
